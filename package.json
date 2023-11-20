@@ -25,6 +25,7 @@
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "keycloak-connect": "^22.0.5",
+    "nest-keycloak-connect": "^1.9.4",
     "passport": "^0.6.0",
     "passport-keycloak-oauth2-oidc": "^1.0.5",
     "reflect-metadata": "^0.1.13",
