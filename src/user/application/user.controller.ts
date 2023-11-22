@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
-import { Roles } from 'nest-keycloak-connect';
-@Controller()
+import { Controller, Post, UseGuards } from '@nestjs/common';
+import { UserService } from '../Infrastructure/user.service';
+import { Public } from 'nest-keycloak-connect';
+@Controller("user")
 export class UserController {
-  constructor() {}
+  constructor(private readonly userService: UserService) {}
 
-  @Get()
-  @Roles({ roles: ['user'] })
-  getHello(): string {
-    return 'logueado';
+  @Post("login")
+  @Public()
+  login() {
+    return this.userService.getAccessToken('admin', 'Hola123');
   }
 }

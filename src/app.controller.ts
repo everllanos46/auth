@@ -1,11 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { Roles } from 'nest-keycloak-connect';
+import { Resource, RoleMatchingMode, Roles } from 'nest-keycloak-connect';
 @Controller()
 export class AppController {
   constructor() {}
 
   @Get()
-  @Roles({ roles: ['user'] })
+  @Roles({ roles: ['admin'], mode: RoleMatchingMode.ANY })
+  @Resource('realm_access')
   getHello(): string {
     return 'logueado';
   }
