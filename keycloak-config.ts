@@ -1,6 +1,11 @@
+import * as process from 'process';
+import { TokenValidation } from 'nest-keycloak-connect';
+
 export const keycloakConfig = {
-  clientId: '3itcapital',
-  authServerUrl: 'http://localhost:8080',
-  realm: 'dev-test',
-  secret: 'ulhutEp3QC1tr6yBNWFZAvk1kMNveJ1x'
+  clientId: process.env.CLIENT_ID || 'front_app',
+  authServerUrl:
+    process.env.AUTH_SERVER_URL || 'http://keycloak.prolinkticdev.linktic.com',
+  realm: process.env.REALM || 'SGDEA',
+  secret: process.env.SECRET || 'J99Vbd8LgMjwTmtPZc0sjSbUhbpTfKlK',
+  tokenValidation: TokenValidation.ONLINE,
 };
