@@ -7,4 +7,6 @@ export default registerAs('configuration', () => ({
   REALM: process.env.REALM,
   SECRET: process.env.SECRET,
   PORT: process.env.PORT,
+  ADMIN_USER: process.env.ADMIN_USER,
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
 }));

@@ -1,36 +1,26 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
-import {
-  AuthGuard,
-  KeycloakConnectModule,
-  KeycloakConnectOptions,
-  RoleGuard,
-} from 'nest-keycloak-connect';
-import { keycloakConfig } from '../keycloak-config';
-import { APP_GUARD } from '@nestjs/core';
+
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './share/resources/env.config';
+import { RolModule } from './rol/rol.module';
+import { CheckClientMiddleware } from './middleware/check-client.middleware';
 
 @Module({
   imports: [
-    KeycloakConnectModule.register(keycloakConfig as KeycloakConnectOptions),
     UserModule,
+    RolModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
     }),
   ],
   controllers: [AppController],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RoleGuard,
-    },
-  ],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(CheckClientMiddleware).forRoutes('/rol');
+  }
+}

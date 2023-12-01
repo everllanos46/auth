@@ -1,3 +1,4 @@
 export class RolCreate {
-  nombre: string;
+  name: string;
+  description: string;
 }
