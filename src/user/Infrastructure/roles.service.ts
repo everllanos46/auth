@@ -7,8 +7,8 @@ export class UserService {
   private clientId = 'admin-cli';
   private realm = 'master';
 
-  async getRoles(adminToken: string): Promise<any> {
-    const url = `${this.keycloakBaseUrl}/admin/realms/dev-test/roles`;
+  async getRoles(adminToken: string, realmName: string): Promise<any> {
+    const url = `${this.keycloakBaseUrl}/admin/realms/${realmName}/roles`;
 
     try {
       const response = await axios.get(url, {
@@ -21,10 +21,11 @@ export class UserService {
       throw error;
     }
   }
-  async createRole(adminToken: string, nameRole: string): Promise<void> {
-    const url = `${this.keycloakBaseUrl}/admin/realms/dev-test/roles`;
+  async createRole(adminToken: string, nameRole: string, realmName: string, roleDescription: string): Promise<void> {
+    const url = `${this.keycloakBaseUrl}/admin/realms/${realmName}/roles`;
     const data = {
       name: nameRole,
+      description: roleDescription
     };
 
     try {
@@ -39,14 +40,14 @@ export class UserService {
     }
   }
 
-  async assignRoleToUser(userId: string, adminToken: string) {
+  async assignRoleToUser(userId: string, adminToken: string, realmName: string, roleId: string, roleName: string) {
     try {
-      const url = `${this.keycloakBaseUrl}/admin/realms/dev-test/users/${userId}/role-mappings/realm`;
-      
+      const url = `${this.keycloakBaseUrl}/admin/realms/${realmName}/users/${userId}/role-mappings/realm`;
+
       const response = await axios.post(url, [
         {
-          "id": "d3c5f0b4-e2b5-4f2e-a183-2806ec685426",
-          "name": "testi"
+          "id": roleId,
+          "name": roleName
         }
       ], {
         headers: {
@@ -62,14 +63,14 @@ export class UserService {
     }
   }
 
-  async addRoleToGroup(groupId: string, adminToken: string) {
+  async addRoleToGroup(groupId: string, adminToken: string, realmName: string, roleId: string, roleName: string) {
     try {
-      const url = `${this.keycloakBaseUrl}/admin/realms/dev-test/groups/${groupId}/role-mappings/realm`;
+      const url = `${this.keycloakBaseUrl}/admin/realms/${realmName}/groups/${groupId}/role-mappings/realm`;
 
       const response = await axios.post(url, [
         {
-          "id": "d3c5f0b4-e2b5-4f2e-a183-2806ec685426",
-          "name": "testi"
+          "id": roleId,
+          "name": roleName
         }
       ], {
         headers: {
