@@ -15,10 +15,7 @@ export class RolService {
   }
   private _url = `${this.configService.get(
     'AUTH_SERVER_URL',
-  )}/admin/realms/${this.configService.get('REALM')}/roles`;
-  private _url_client = `${this.configService.get(
-    'AUTH_SERVER_URL',
-  )}/admin/realms/${this.configService.get('REALM')}/clients`;
+  )}/admin/realms/${this.configService.get('REALM')}`;
   constructor(private readonly configService: ConfigService) {}
 
   private async login_admin(): Promise<any> {
@@ -30,7 +27,7 @@ export class RolService {
   }
   async getRoles(): Promise<any> {
     const headers = await this.getHeadersAdmin();
-    return await axios.get(this._url, { headers });
+    return await axios.get(`${this._url}/roles`, { headers });
   }
 
   private async getHeadersAdmin() {
@@ -43,29 +40,29 @@ export class RolService {
 
   async createRoles(rol: RolCreate): Promise<any> {
     const headers = await this.getHeadersAdmin();
-    return await axios.post(this._url, rol, { headers });
+    return await axios.post(`${this._url}/roles`, rol, { headers });
   }
 
   async editRol(rol: RolCreate, old_name: string): Promise<any> {
     const headers = await this.getHeadersAdmin();
-    return await axios.put(`${this._url}/${old_name}`, rol, { headers });
+    return await axios.put(`${this._url}/roles/${old_name}`, rol, { headers });
   }
 
   async deleteRol(rolName: string): Promise<any> {
     const headers = await this.getHeadersAdmin();
-    return await axios.delete(`${this._url}/${rolName}`, { headers });
+    return await axios.delete(`${this._url}/roles/${rolName}`, { headers });
   }
 
   async createRolToClient(rol: RolCreate, client_id: string): Promise<any> {
     const headers = await this.getHeadersAdmin();
-    return await axios.post(`${this._url_client}/${client_id}/roles`, rol, {
+    return await axios.post(`${this._url}/clients/${client_id}/roles`, rol, {
       headers,
     });
   }
 
   async getRolesClient(client_id: string): Promise<any> {
     const headers = await this.getHeadersAdmin();
-    return await axios.get(`${this._url_client}/${client_id}/roles`, {
+    return await axios.get(`${this._url}/clients/${client_id}/roles`, {
       headers,
     });
   }
@@ -77,7 +74,7 @@ export class RolService {
   ): Promise<any> {
     const headers = await this.getHeadersAdmin();
     return await axios.put(
-      `${this._url_client}/${client_id}/roles/${role_name}`,
+      `${this._url}/clients/${client_id}/roles/${role_name}`,
       rol,
       {
         headers,
@@ -88,7 +85,29 @@ export class RolService {
   async deleteRolClient(client_id: string, role_name: string): Promise<any> {
     const headers = await this.getHeadersAdmin();
     return await axios.delete(
-      `${this._url_client}/${client_id}/roles/${role_name}`,
+      `${this._url}/clients/${client_id}/roles/${role_name}`,
+      { headers },
+    );
+  }
+
+  async addUserRealmRoles(roles: any, user_id: string): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.post(
+      `${this._url}/users/${user_id}/role-mappings/realm`,
+      roles,
+      { headers },
+    );
+  }
+
+  async addUserClientRoles(
+    roles: any,
+    user_id: string,
+    client_id: string,
+  ): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.post(
+      `${this._url}/users/${user_id}/role-mappings/clients/${client_id}`,
+      roles,
       { headers },
     );
   }

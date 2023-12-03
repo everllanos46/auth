@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { RolService } from '../infrastructure/rol.service';
 import { Response } from 'express';
-import { RolCreate } from '../domain/rol.dto';
+import { RolCreate, Role } from '../domain/rol.dto';
 
 @Controller('rol')
 export class RolController {
@@ -131,6 +131,41 @@ export class RolController {
         role_name,
       );
       res.status(response.status).send('Rol Eliminado');
+    } catch (e: any) {
+      const { errorMessage } = e.response.data;
+      res.status(e.response.status).send(errorMessage);
+    }
+  }
+
+  @Post('AddUserRole/:user_id')
+  async addUserToRole(
+    @Param('user_id') user_id: string,
+    @Body() roles: Role[],
+    @Res() res: Response,
+  ) {
+    try {
+      const response = await this.rolService.addUserRealmRoles(roles, user_id);
+      res.status(response.status).send('Roles agregados');
+    } catch (e: any) {
+      const { errorMessage } = e.response.data;
+      res.status(e.response.status).send(errorMessage);
+    }
+  }
+
+  @Post('AddUserClientRole/:user_id/client/:client_id')
+  async addUserToClientRole(
+    @Param('user_id') user_id: string,
+    @Param('client_id') client_id: string,
+    @Body() roles: Role[],
+    @Res() res: Response,
+  ) {
+    try {
+      const response = await this.rolService.addUserClientRoles(
+        roles,
+        user_id,
+        client_id,
+      );
+      res.status(response.status).send('Roles agregados');
     } catch (e: any) {
       const { errorMessage } = e.response.data;
       res.status(e.response.status).send(errorMessage);
