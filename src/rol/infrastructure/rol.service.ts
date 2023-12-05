@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { login } from '../../share/resources/apiUtils';
 import axios from 'axios';
 import { RolCreate } from '../domain/rol.dto';
+import * as http from 'http';
 
 @Injectable()
 export class RolService {
@@ -110,5 +111,78 @@ export class RolService {
       roles,
       { headers },
     );
+  }
+
+  async getRolesUser(user_id: string): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.get(`${this._url}/users/${user_id}/role-mappings`, {
+      headers,
+    });
+  }
+
+  async DeleteClientRoleUser(
+    roles: any,
+    user_id: string,
+    client_id: string,
+  ): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await this.deleteWithBody(
+      `${this._url}/users/${user_id}/role-mappings/clients/${client_id}`,
+      roles,
+      headers,
+    );
+  }
+
+  async DeleteRealmRoleUser(roles: any, user_id: string): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await this.deleteWithBody(
+      `${this._url}/users/${user_id}/role-mappings/realm`,
+      roles,
+      headers,
+    );
+  }
+
+  async deleteWithBody(url: string, data: any, headers: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: headers.authorization,
+        },
+      };
+
+      const req = http.request(url, options, (res) => {
+        let responseData = '';
+
+        res.on('data', (chunk) => {
+          responseData += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            // Intenta analizar la respuesta solo si responseData no está vacía
+            const parsedData = responseData ? JSON.parse(responseData) : null;
+            resolve(parsedData);
+          } catch (error) {
+            reject(
+              new Error(
+                `Error al analizar la respuesta JSON: ${error.message}`,
+              ),
+            );
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        reject(new Error(`Error en la solicitud DELETE: ${error.message}`));
+      });
+
+      if (data) {
+        req.write(JSON.stringify(data));
+      }
+
+      req.end();
+    });
   }
 }

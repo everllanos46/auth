@@ -171,4 +171,37 @@ export class RolController {
       res.status(e.response.status).send(errorMessage);
     }
   }
+
+  @Delete('DeleteClientRoleUser/:user_id/client/:client_id')
+  async deleteClientRoleUser(
+    @Param('user_id') user_id: string,
+    @Param('client_id') client_id: string,
+    @Body() roles: Role[],
+    @Res() res: Response,
+  ) {
+    try {
+      await this.rolService.DeleteClientRoleUser(roles, user_id, client_id);
+      res.status(200).send('Eliminado');
+    } catch (e: any) {
+      console.log(e);
+      //const { errorMessage } = e.response.data;
+      res.status(e).send('Error al eliminar');
+    }
+  }
+
+  @Delete('DeleteRealmRoleUser/:user_id')
+  async deleteRealmRoleUser(
+    @Param('user_id') user_id: string,
+    @Body() roles: Role[],
+    @Res() res: Response,
+  ) {
+    try {
+      await this.rolService.DeleteRealmRoleUser(roles, user_id);
+      res.status(200).send('Eliminado');
+    } catch (e: any) {
+      console.log(e);
+      //const { errorMessage } = e.response.data;
+      res.status(e).send('Error al eliminar');
+    }
+  }
 }
