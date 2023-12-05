@@ -4,8 +4,5 @@ import { UserService } from '../Infrastructure/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('login')
-  login() {
-    return this.userService.getAccessToken('admin', 'Hola123');
-  }
+  
 }

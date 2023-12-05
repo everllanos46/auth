@@ -26,3 +26,8 @@ export class UserEdit {
   firstname: string;
   lastname: string;
 }
+
+export class UserLogin{
+  username: string;
+  password: string;
+}
