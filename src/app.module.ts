@@ -1,22 +1,23 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
 
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './share/resources/env.config';
 import { RolModule } from './rol/rol.module';
 import { CheckClientMiddleware } from './middleware/check-client.middleware';
+import { PermissionModule } from './Permission/permission.module';
 
 @Module({
   imports: [
     UserModule,
     RolModule,
+    PermissionModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
     }),
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [],
 })
 export class AppModule implements NestModule {
