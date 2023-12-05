@@ -1,66 +1,71 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { login } from 'src/share/resources/apiUtils';
+import { UserCreate, UserEdit, UserReset } from '../domain/user.dto';
 
 @Injectable()
 export class UserService {
-  private keycloakBaseUrl = 'http://localhost:8080';
-  private clientId = 'admin-cli';
-  private realm = 'master';
 
-  async getAccessToken(username: string, password: string): Promise<string> {
-    const tokenEndpoint = `${this.keycloakBaseUrl}/realms/${this.realm}/protocol/openid-connect/token`;
+  get url(): string {
+    return this._url;
+  }
+  set url(value: string) {
+    this._url = value;
+  }
 
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
+  private _url = `${this.configService.get(
+    'AUTH_SERVER_URL',
+  )}/admin/realms/${this.configService.get('REALM')}`;
+  constructor(private readonly configService: ConfigService) { }
+
+
+  private async login_admin(): Promise<any> {
+    return await login(
+      this.configService.get('ADMIN_USER'),
+      this.configService.get('ADMIN_PASSWORD'),
+      this.configService.get('AUTH_SERVER_URL'),
+    );
+  }
+
+  private async getHeadersAdmin() {
+    const { access_token } = await this.login_admin();
+
+    return {
+      authorization: `bearer ${access_token}`,
     };
+  }
 
-    const data = new URLSearchParams({
-      username: username,
-      password: password,
-      grant_type: 'password',
-      client_id: this.clientId,
+  async getUsers(): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    const url = `${this._url}/users`;
+    return await axios.get(url, {
+      headers
     });
-
-    try {
-      const response = await axios.post(tokenEndpoint, data, { headers });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
   }
 
-  async getUsers(adminToken: string): Promise<any> {
-    const url = `${this.keycloakBaseUrl}/admin/realms/dev-test/users`;
-
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+  async resetPassword(userReset: UserReset): Promise<void> {
+    const url = `${this._url}/users/${userReset.userId}/reset-password`;
+    const headers = await this.getHeadersAdmin();
+    return await axios.put(url, userReset, {
+      headers
+    });
   }
 
-  async resetPassword(userId: string, adminToken: string, pass: string): Promise<void> {
-    const url = `${this.keycloakBaseUrl}/admin/realms/dev-test/users/${userId}/reset-password`;
-    const data = {
-      type: 'password',
-      value: pass,
-      temporary: false,
-    };
+  async createUser(userCreate: UserCreate) {
+    const headers = await this.getHeadersAdmin();
+    const url = `${this.url}/users`;
 
-    try {
-      await axios.put(url, data, {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (error) {
-      throw error;
-    }
+    return await axios.post(url, userCreate, {
+      headers
+    });
+  }
+
+  async editUser(userEdit: UserEdit) {
+    const headers = await this.getHeadersAdmin();
+    const url = `${this._url}/users/${userEdit.userId}`;
+    return await axios.put(url, userEdit, {
+      headers
+    });
   }
 }
