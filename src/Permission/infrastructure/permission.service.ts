@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { login } from '../../share/resources/apiUtils';
 import axios from 'axios';
-import { PolicyEdit, Policy } from '../domain/permission.dto';
+import { PolicyEdit, Policy, Permission } from '../domain/permission.dto';
 
 @Injectable()
 export class PermissionService {
@@ -60,6 +60,50 @@ export class PermissionService {
     return await axios.put(
       `${this._url}/clients/${client_id}/authz/resource-server/policy/role/${policy_id}`,
       policy,
+      { headers },
+    );
+  }
+
+  async createPermission(
+    permission: Permission,
+    client_id: string,
+  ): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.post(
+      `${this._url}/clients/${client_id}/authz/resource-server/permission/resource`,
+      permission,
+      { headers },
+    );
+  }
+
+  async editPermission(
+    permission: Permission,
+    client_id: string,
+    permission_id: string,
+  ): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.put(
+      `${this._url}/clients/${client_id}/authz/resource-server/permission/resource/${permission_id}`,
+      permission,
+      { headers },
+    );
+  }
+
+  async getPermissions(client_id: string): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.get(
+      `${this._url}/clients/${client_id}/authz/resource-server/permission`,
+      { headers },
+    );
+  }
+
+  async deletePermission(
+    client_id: string,
+    permission_id: string,
+  ): Promise<any> {
+    const headers = await this.getHeadersAdmin();
+    return await axios.delete(
+      `${this._url}/clients/${client_id}/authz/resource-server/permission/resource/${permission_id}`,
       { headers },
     );
   }
