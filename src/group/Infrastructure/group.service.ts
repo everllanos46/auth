@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
-export class UserService {
+export class GroupService {
   private keycloakBaseUrl = 'http://localhost:8080';
   private clientId = 'admin-cli';
   private realm = 'master';

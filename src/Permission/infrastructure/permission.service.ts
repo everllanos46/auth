@@ -16,6 +16,8 @@ export class PermissionService {
       this.configService.get('ADMIN_USER'),
       this.configService.get('ADMIN_PASSWORD'),
       this.configService.get('AUTH_SERVER_URL'),
+      this.configService.get('REALM'),
+      this.configService.get('CLIENT_ID')
     );
   }
   private async getHeadersAdmin() {

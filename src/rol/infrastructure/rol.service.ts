@@ -24,6 +24,8 @@ export class RolService {
       this.configService.get('ADMIN_USER'),
       this.configService.get('ADMIN_PASSWORD'),
       this.configService.get('AUTH_SERVER_URL'),
+      this.configService.get('REALM'),
+      this.configService.get('CLIENT_ID')
     );
   }
   async getRoles(): Promise<any> {
