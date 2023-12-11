@@ -46,7 +46,7 @@ export class UserService {
     });
   }
 
-  async resetPassword(userReset: UserReset): Promise<void> {
+  async resetPassword(userReset: UserReset): Promise<any> {
     const url = `${this._url}/users/${userReset.userId}/reset-password`;
     const headers = await this.getHeadersAdmin();
     return await axios.put(url, userReset, {
@@ -54,7 +54,7 @@ export class UserService {
     });
   }
 
-  async createUser(userCreate: UserCreate) {
+  async createUser(userCreate: UserCreate): Promise<any>  {
     const headers = await this.getHeadersAdmin();
     const url = `${this.url}/users`;
 
@@ -63,7 +63,7 @@ export class UserService {
     });
   }
 
-  async editUser(userEdit: UserEdit) {
+  async editUser(userEdit: UserEdit): Promise<any>  {
     const headers = await this.getHeadersAdmin();
     const url = `${this._url}/users/${userEdit.userId}`;
     return await axios.put(url, userEdit, {
