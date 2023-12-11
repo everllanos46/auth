@@ -30,4 +30,5 @@ export class UserEdit {
 export class UserLogin{
   username: string;
   password: string;
+  client_secret: string;
 }

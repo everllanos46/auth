@@ -30,7 +30,6 @@ export class PermissionController {
     }
   }
 
-  // al borrar una policy, se borran todos los permisos asociados
   @Delete('policies/:client_id/policy/:policy_id')
   async deletePolicy(
     @Param('client_id') client_id: string,

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from '../Infrastructure/user.service';
-import { UserCreate, UserEdit, UserReset } from '../domain/user.dto';
+import { UserCreate, UserEdit, UserLogin, UserReset } from '../domain/user.dto';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -38,6 +38,20 @@ export class UserController {
   ){
     try {
       const response = await this.userService.createUser(user);
+      res.status(response.status).send('User created');
+    } catch (e:any) {
+      const { errorMessage } = e.response.data;
+      res.status(e.response.status).send(errorMessage);
+    }
+  }
+
+  @Post('users/login')
+  async login(
+    @Res() res: Response,
+    @Body() user: UserLogin,
+  ){
+    try {
+      const response = await this.userService.login_user(user);
       res.status(response.status).send('User created');
     } catch (e:any) {
       const { errorMessage } = e.response.data;

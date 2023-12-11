@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { login } from 'src/share/resources/apiUtils';
-import { UserCreate, UserEdit, UserReset } from '../domain/user.dto';
+import { UserCreate, UserEdit, UserLogin, UserReset } from '../domain/user.dto';
 
 @Injectable()
 export class UserService {
@@ -26,7 +26,19 @@ export class UserService {
       this.configService.get('ADMIN_PASSWORD'),
       this.configService.get('AUTH_SERVER_URL'),
       this.configService.get('REALM'),
-      this.configService.get('CLIENT_ID')
+      this.configService.get('CLIENT_ID'),
+      ""
+    );
+  }
+
+  async login_user(userLogin: UserLogin): Promise<any> {
+    return await login(
+      userLogin.username,
+      userLogin.password,
+      this.configService.get('AUTH_SERVER_URL'),
+      this.configService.get('REALM'),
+      this.configService.get('CLIENT_ID'),
+      userLogin.client_secret
     );
   }
 
@@ -54,7 +66,7 @@ export class UserService {
     });
   }
 
-  async createUser(userCreate: UserCreate): Promise<any>  {
+  async createUser(userCreate: UserCreate): Promise<any> {
     const headers = await this.getHeadersAdmin();
     const url = `${this.url}/users`;
 
@@ -63,7 +75,7 @@ export class UserService {
     });
   }
 
-  async editUser(userEdit: UserEdit): Promise<any>  {
+  async editUser(userEdit: UserEdit): Promise<any> {
     const headers = await this.getHeadersAdmin();
     const url = `${this._url}/users/${userEdit.userId}`;
     return await axios.put(url, userEdit, {

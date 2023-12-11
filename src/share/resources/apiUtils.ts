@@ -5,7 +5,8 @@ export const login = async (
   password: string,
   keycloakBaseUrl: string,
   realm: string,
-  client_id: string
+  client_id: string,
+  client_secret: string
 ) => {
   const tokenEndpoint = `${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/token`;
 
@@ -13,11 +14,17 @@ export const login = async (
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
-  const data = new URLSearchParams({
+  const data = client_secret != "" ? new URLSearchParams({
     username: user,
     password: password,
     grant_type: 'password',
     client_id: client_id,
+  }) : new URLSearchParams({
+    username: user,
+    password: password,
+    grant_type: 'password',
+    client_id: client_id,
+    client_secret: client_secret
   });
 
   try {
